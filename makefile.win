@@ -1,0 +1,43 @@
+# VARIABLES ----------------------------------------------------------------------------------------
+PROJ_NAME = csee4290
+PY  = python
+PIP = pip
+
+ENV_DIR     = .env
+ENV_BIN_DIR = $(ENV_DIR)\Scripts
+ENV_PY      = $(ENV_BIN_DIR)\python
+ENV_PIP     = $(ENV_BIN_DIR)\pip
+
+INSTALLER      = pyinstaller
+INSTALLER_ARGS = --onefile -n $(PROJ_NAME) $(PROJ_NAME)\__init__.py
+
+# RULES --------------------------------------------------------------------------------------------
+
+# Creates an executable from this application
+.PHONY: build
+build:
+	$(INSTALLER) $(INSTALLER_ARGS)
+
+# Removes unnecessary temporary files from the working tree
+.PHONY: clean
+clean:
+	powershell "if (test-path build\) { Remove-Item -Recurse -Force build\ } "
+	powershell "if (test-path dist\) { Remove-Item -Recurse -Force dist\ } "
+	powershell "if (test-path *.egg-info\) { Remove-Item -Recurse -Force *.egg-info\ } "
+	powershell "if (test-path $(PROJ_NAME)\__pycache__\) { Remove-Item -Recurse -Force $(PROJ_NAME)\__pycache__\ } "
+	powershell "if (test-path *.spec) { Remove-Item -Force *.spec } "
+
+# Sets up the virtual environment for development
+.PHONY: setup
+setup: $(ENV_DIR) # Prevents this from being run if the '.env\' directory exists
+
+$(ENV_DIR):
+	$(PY) -m venv $(ENV_DIR)
+
+# Installs project dependencies into the virtual environment
+.PHONY: finsh_setup
+finish_setup:
+	$(ENV_PIP) install --upgrade pip
+	$(ENV_PIP) install wheel
+	$(ENV_PIP) install -r requirements.txt
+
