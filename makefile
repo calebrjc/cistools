@@ -1,21 +1,23 @@
 # VARIABLES ----------------------------------------------------------------------------------------
-PROJ_NAME = ciatools
-PY = python
+PROJ_NAME = cistools
+
+PY  = python
 PIP = pip
 
-ENV_DIR = .env
+ENV_DIR     = .env
 ENV_BIN_DIR = $(ENV_DIR)/bin
 ENV_PY      = $(ENV_BIN_DIR)/python
 ENV_PIP     = $(ENV_BIN_DIR)/pip
 
 INSTALLER = pyinstaller
-INSTALLER_ARGS = --onefile -n $(PROJ_NAME) $(PROJ_NAME)/__init__.py
+INSTALLER_ARGS = --onefile -n $(PROJ_NAME) $(PROJ_NAME)/cli.py
 
 # RULES --------------------------------------------------------------------------------------------
 
 # Creates an executable from this application
-.PHONY: build
-build:
+build: dist/$(PROJ_NAME)
+
+dist/$(PROJ_NAME):
 	$(INSTALLER) $(INSTALLER_ARGS)
 
 # Removes unnecessary temporary files from the working tree
